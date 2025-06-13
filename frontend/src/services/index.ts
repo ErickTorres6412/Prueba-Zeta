@@ -3,6 +3,7 @@ import { ApiClient } from './client';
 import { AuthService } from './auth.service';
 import { ProductosService } from './ProductosService';
 import { UsuariosService } from './UsuariosService';
+import { CategoriasService } from './CategoriasService';
 
 // Configuración de la API
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
@@ -14,6 +15,7 @@ const apiClient = new ApiClient(API_BASE_URL);
 export const authService = new AuthService(apiClient);
 export const productosService = new ProductosService(apiClient);
 export const usuariosService = new UsuariosService(apiClient);
+export const categoriasService = new CategoriasService(apiClient);
 
 // Exportar también el cliente base por si se necesita
 export { apiClient };

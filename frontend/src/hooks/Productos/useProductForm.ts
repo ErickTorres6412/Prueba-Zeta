@@ -1,15 +1,16 @@
 // hooks/useProductForm.ts
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { productosService } from "@/services/index"
+import { productosService, categoriasService } from "@/services/index"
 import { showConfirmAlert, showSuccessAlert, showErrorAlert } from "@/utils/alerts"
+import { categoria } from "@/types/categoria"
 
 interface ProductFormData {
   nombre: string
   descripcion: string
   precio: string
   url_imagen: string
-  categoria: string
+  categoria_id: string // Cambiar a categoria_id para coincidir con el backend
 }
 
 interface ProductFormErrors extends Partial<ProductFormData> {
@@ -20,7 +21,9 @@ interface UseProductFormReturn {
   product: ProductFormData
   errors: ProductFormErrors
   isSubmitting: boolean
+  categorias: categoria[]
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  handleSelectChange: (e: React.ChangeEvent<HTMLSelectElement>) => void // Nueva función para selects
   handleSubmit: (e: React.FormEvent) => Promise<void>
   clearError: (field: keyof ProductFormErrors) => void
 }
@@ -31,12 +34,28 @@ export const useProductForm = (): UseProductFormReturn => {
     descripcion: "",
     precio: "",
     url_imagen: "",
-    categoria: "",
+    categoria_id: "", // Cambiar a categoria_id
   })
 
   const [errors, setErrors] = useState<ProductFormErrors>({})
+  const [categorias, setCategorias] = useState<categoria[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const token = localStorage.getItem("token") || ""
+        const resp = await categoriasService.getCategorias(token)
+        if (!resp.error) {
+          setCategorias(resp.body)
+        }
+      } catch (err) {
+        console.error("Error cargando categorías", err)
+        showErrorAlert("Error", "No se pudieron cargar las categorías")
+      }
+    })()
+  }, [])
 
   const validateField = (name: string, value: string): string | undefined => {
     switch (name) {
@@ -60,10 +79,8 @@ export const useProductForm = (): UseProductFormReturn => {
         if (precio > 999999.99) return "El precio no puede exceder $999,999.99"
         break
       
-      case "categoria":
-        if (!value.trim()) return "La categoría es requerida"
-        if (value.trim().length < 2) return "La categoría debe tener al menos 2 caracteres"
-        if (value.trim().length > 50) return "La categoría no puede exceder 50 caracteres"
+      case "categoria_id":
+        if (!value || value === "") return "La categoría es requerida"
         break
       
       case "url_imagen":
@@ -86,9 +103,9 @@ export const useProductForm = (): UseProductFormReturn => {
     const newErrors: ProductFormErrors = {}
     
     Object.entries(product).forEach(([key, value]) => {
-      const error = validateField(key, value)
+      const error = validateField(key, String(value))
       if (error) {
-        newErrors[key as keyof ProductFormData] = error
+        (newErrors as any)[key] = error
       }
     })
 
@@ -97,6 +114,16 @@ export const useProductForm = (): UseProductFormReturn => {
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setProduct((prev) => ({ ...prev, [name]: value }))
+
+    // Validación en tiempo real
+    const error = validateField(name, value)
+    setErrors((prev) => ({ ...prev, [name]: error }))
+  }
+
+  // Nueva función para manejar cambios en selects
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target
     setProduct((prev) => ({ ...prev, [name]: value }))
 
@@ -133,13 +160,11 @@ export const useProductForm = (): UseProductFormReturn => {
     try {
       const token = localStorage.getItem("token") || ""
       const productData = { 
-        ...product, 
-        precio: Number(product.precio),
-        // Limpiar espacios en blanco
         nombre: product.nombre.trim(),
         descripcion: product.descripcion.trim(),
-        categoria: product.categoria.trim(),
-        url_imagen: product.url_imagen.trim()
+        precio: Number(product.precio),
+        categoria_id: Number(product.categoria_id),
+        url_imagen: product.url_imagen.trim() || undefined
       }
       
       await productosService.crearProducto(productData, token)
@@ -160,11 +185,13 @@ export const useProductForm = (): UseProductFormReturn => {
   }
 
   return {
+    categorias,
     product,
     errors,
     isSubmitting,
     handleInputChange,
+    handleSelectChange, 
     handleSubmit,
-    clearError
+    clearError,
   }
 }

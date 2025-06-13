@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { useCart } from '@/context/CartContext'
+import { useRouter } from 'next/navigation'
 
 interface CartDropdownProps {
   isOpen: boolean
@@ -10,12 +11,18 @@ interface CartDropdownProps {
 
 const CartDropdown: React.FC<CartDropdownProps> = ({ isOpen, onClose }) => {
   const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart()
+  const router = useRouter()
 
   const formatearPrecio = (precio: string | number): string => {
     return new Intl.NumberFormat("es-CR", {
       style: "currency",
       currency: "USD",
     }).format(Number.parseFloat(precio.toString()))
+  }
+
+  const handleCheckout = () => {
+    onClose() // Cerrar el dropdown
+    router.push('/dashboard/checkout') // Navegar a la página de checkout
   }
 
   if (!isOpen) return null
@@ -149,9 +156,7 @@ const CartDropdown: React.FC<CartDropdownProps> = ({ isOpen, onClose }) => {
               </button>
               <button
                 onClick={() => {
-                  // Aquí puedes agregar la lógica para ir al checkout
-                  console.log('Ir al checkout')
-                  onClose()
+                  handleCheckout()
                 }}
                 className="flex-1 px-3 py-2 text-sm bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300"
               >

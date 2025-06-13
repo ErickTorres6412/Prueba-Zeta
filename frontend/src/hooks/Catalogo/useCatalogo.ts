@@ -32,7 +32,7 @@ export const useCatalogo = () => {
     // Filtrar por categoría
     if (selectedCategory) {
       productosFilt = productosFilt.filter(producto =>
-        producto.categoria === selectedCategory
+        producto.categoria.nombre === selectedCategory
       );
     }
 
@@ -58,7 +58,7 @@ export const useCatalogo = () => {
           setProductos(response.body);
 
           // Extraer categorías únicas
-          const categoriasUnicas = [...new Set(response.body.map(p => p.categoria))];
+          const categoriasUnicas = [...new Set(response.body.map(p => p.categoria.nombre))];
           setCategorias(categoriasUnicas);
 
           setLoading(false);

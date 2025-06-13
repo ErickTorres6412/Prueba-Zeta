@@ -4,7 +4,7 @@ config = require('../config');
 const secret = config.jwt.secret;
 
 function asignarToken(data) {
-    return jwt.sign(data, secret, { expiresIn: '24h' }); // Agregar expiración
+    return jwt.sign(data, secret, { expiresIn: '24h' }); 
 }
 
 function verificarToken(token) {

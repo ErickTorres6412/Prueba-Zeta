@@ -21,7 +21,7 @@ export class AuthService {
    * Registrar nuevo usuario
    */
   async register(credentials: RegisterCredentials): Promise<RegisterResponse> {
-    return this.apiClient.post<RegisterResponse>('/usuarios', credentials);
+    return this.apiClient.post<RegisterResponse>('/usuarios/register', credentials);
   }
 
   /**

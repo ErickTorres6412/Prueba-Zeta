@@ -7,6 +7,15 @@ export interface Usuario {
   //role: string;
 }
 
+export interface CrearUsuario {
+  nombre: string;
+  apellidos: string;
+  email: string;
+  username: string;
+  password: string;
+  role: string;
+}
+
 // En types/product.ts
 export interface UsuarioResponse {
   error: boolean;

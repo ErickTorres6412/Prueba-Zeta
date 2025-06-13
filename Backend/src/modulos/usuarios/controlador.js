@@ -29,15 +29,12 @@ module.exports = function (dbinyectada) {
 
     async function agregar(body) {
         try {
-            // Separar datos de usuario y autenticación
             const { username, password, role, ...userData } = body;
             
-            // Agregar usuario primero
             const usuarioResult = await db.agregar(TABLA, userData);
 
            let insertedId = usuarioResult[0].id;
 
-            // Si se proporcionan datos de autenticación, crear registro en auth
             if (username && password) {
                 await auth.agregar({
                     user_id: insertedId,
@@ -55,11 +52,37 @@ module.exports = function (dbinyectada) {
         }
     }
 
+    async function register(body) {
+        try {
+            const { username, password, role, ...userData } = body;
+            
+            const usuarioResult = await db.agregar(TABLA, userData);
+
+           let insertedId = usuarioResult[0].id;
+
+            if (username && password) {
+                await auth.agregar({
+                    user_id: insertedId,
+                    username: username,
+                    password: password,
+                    role: 'user'
+                });
+            }
+
+            return true;
+            
+        } catch (error) {
+            console.error('Error en agregar usuario:', error);
+            throw error;
+        }
+    }
+
     return {
         todos,
         uno,
         eliminar,
         agregar,
-        actualizar
+        actualizar,
+        register
     }
 };

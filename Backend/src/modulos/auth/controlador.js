@@ -1,6 +1,7 @@
 const TABLA = 'auth';
 const bcrypt = require('bcrypt');
 const auth = require('../../auth');
+const errors = require('../../middleware/errors');
 
 module.exports = function (dbinyectada) {
     
@@ -15,7 +16,7 @@ module.exports = function (dbinyectada) {
             const result = await db.query(`SELECT * FROM ${TABLA} WHERE username = $1`, [username]);
             
             if (result.length === 0) {
-                throw new Error('Credenciales incorrectas');
+                throw new errors('Credenciales incorrectas', 401);
             }
             
             const data = result[0];
@@ -41,7 +42,7 @@ module.exports = function (dbinyectada) {
                     }
                 };
             } else {
-                throw new Error('Credenciales incorrectas');
+                throw new errors('Credenciales incorrectas', 401);
             }
         } catch (error) {
             throw error;
@@ -49,7 +50,6 @@ module.exports = function (dbinyectada) {
     }
 
     async function agregar(data) {
-        // Hashear la contraseña antes de guardarla
         const hashedPassword = await bcrypt.hash(data.password, 10);
         
         const authData = {

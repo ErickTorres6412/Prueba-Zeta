@@ -3,13 +3,14 @@
 import type React from "react"
 import { Button } from "@/components/ui/Button"
 import { FormInput } from "@/components/ui/Input"
+import { FormSelect } from "@/components/ui/FormSelect" // Importar el nuevo componente
 import { useProductForm } from "@/hooks/Productos/useProductForm"
-import { 
-  Package, 
-  DollarSign, 
-  Image, 
-  Tag, 
-  FileText 
+import {
+  Package,
+  DollarSign,
+  Image,
+  Tag,
+  FileText
 } from "lucide-react"
 
 export const AgregarProductosForm: React.FC = () => {
@@ -18,8 +19,16 @@ export const AgregarProductosForm: React.FC = () => {
     errors,
     isSubmitting,
     handleInputChange,
+    handleSelectChange, // Nueva función del hook
     handleSubmit,
+    categorias
   } = useProductForm()
+
+  // Convertir categorías al formato requerido por FormSelect
+  const categoriaOptions = categorias.map(categoria => ({
+    value: categoria.id,
+    label: categoria.nombre
+  }))
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
@@ -61,17 +70,18 @@ export const AgregarProductosForm: React.FC = () => {
               helperText="Mínimo 3 caracteres, máximo 100"
             />
 
-            <FormInput
+            <FormSelect
               label="Categoría"
-              name="categoria"
-              placeholder="Ej: Smartphones, Laptops, Tablets"
-              value={product.categoria}
-              onChange={handleInputChange}
-              error={errors.categoria}
+              name="categoria_id"
+              value={product.categoria_id}
+              onChange={handleSelectChange} // Usar la nueva función
+              error={errors.categoria_id}
               disabled={isSubmitting}
               isRequired
               leftIcon={<Tag className="w-4 h-4" />}
-              helperText="Mínimo 2 caracteres, máximo 50"
+              options={categoriaOptions}
+              placeholder="Selecciona una categoría"
+              helperText="Selecciona la categoría del producto"
             />
 
             <FormInput
@@ -122,7 +132,7 @@ export const AgregarProductosForm: React.FC = () => {
 
           <div className="mt-8 flex justify-end space-x-3">
             <Button
-              type="button"  
+              type="button"
               disabled={isSubmitting}
               onClick={() => window.history.back()}
               className="px-5 py-2"

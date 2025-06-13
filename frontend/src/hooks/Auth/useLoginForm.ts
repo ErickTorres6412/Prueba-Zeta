@@ -42,12 +42,12 @@ export const useLoginForm = (): UseLoginFormReturn => {
     switch (name) {
       case "username":
         if (!value.trim()) return "El nombre de usuario es requerido"
-        if (value.trim().length < 3) return "El nombre de usuario debe tener al menos 3 caracteres"
+        if (value.trim().length < 6) return "El nombre de usuario debe tener al menos 6 caracteres"
         break
-      
+
       case "password":
         if (!value.trim()) return "La contraseña es requerida"
-        if (value.length < 3) return "La contraseña debe tener al menos 6 caracteres"
+        if (value.length < 8) return "La contraseña debe tener al menos 8 caracteres"
         break
     }
     return undefined
@@ -104,16 +104,24 @@ export const useLoginForm = (): UseLoginFormReturn => {
 
     try {
       await login(credentials)
-
       router.push("/dashboard/catalogo")
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Error desconocido al iniciar sesión"
-      
-      await showErrorAlert(
-        "Error de autenticación",
-        errorMessage
-      )
-      
+    } catch (error: any) {
+      let errorMessage = "Error desconocido al iniciar sesión"
+
+      // Verifica si es un error HTTP con respuesta del servidor
+      if (error.response && error.response.data) {
+        console.error("Error de autenticación:", error.response)
+        const data = error.response.data
+        if (Array.isArray(data.body)) {
+          // Si body es un array de mensajes, los unimos en una sola cadena
+          errorMessage = data.body.join("\n")
+        } else if (typeof data.body === "string") {
+          errorMessage = data.body
+        }
+      }
+
+      await showErrorAlert("Error de autenticación", errorMessage)
+
       setErrors({ general: errorMessage })
     } finally {
       setIsSubmitting(false)

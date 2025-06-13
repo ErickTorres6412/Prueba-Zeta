@@ -47,8 +47,10 @@ const Sidebar: React.FC = () => {
         </svg>
       ),
       subItems: [
+        { name: 'Agregar Producto', href: '/dashboard/productos/agregar' },
         { name: 'Visualizar Productos', href: '/dashboard/productos/visualizar' },
-        { name: 'Agregar Producto', href: '/dashboard/productos/agregar' }
+        { name: 'Agregar Categoria', href: '/dashboard/productos/categorias/agregar' },
+        { name: 'Visualizar Categorias', href: '/dashboard/productos/categorias/visualizar' }
       ]
     },
     {
@@ -64,7 +66,8 @@ const Sidebar: React.FC = () => {
         </svg>
       ),
       subItems: [
-        { name: 'Visualizar Usuarios', href: '/dashboard/usuarios/visualizar' }
+        { name: 'Visualizar Usuarios', href: '/dashboard/usuarios/visualizar' },
+        { name: 'Registrar Usuarios', href: '/dashboard/usuarios/agregar' }
       ]
     }
   ]

@@ -7,6 +7,7 @@ const cors = require('cors');
 const productos = require('./modulos/productos/rutas');
 const usuarios = require('./modulos/usuarios/rutas');
 const auth = require('./modulos/auth/rutas');
+const categorias = require('./modulos/categorias/rutas');
 
 const app = express();
 
@@ -29,6 +30,8 @@ app.use(cors({
 app.use('/api/productos', productos);
 app.use('/api/usuarios', usuarios)
 app.use('/api/auth', auth);
+app.use('/api/categorias', categorias);
+
 app.use(error);
 
 module.exports = app;

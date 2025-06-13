@@ -99,7 +99,9 @@ export const VisualizarProductos: React.FC = () => {
                         >
                             <option value="">Todas las categorías</option>
                             {categorias.map(categoria => (
-                                <option key={categoria} value={categoria}>{categoria}</option>
+                                <option key={categoria.id} value={categoria.nombre}>
+                                    {categoria.nombre}
+                                </option>
                             ))}
                         </select>
                     </div>
@@ -135,8 +137,8 @@ export const VisualizarProductos: React.FC = () => {
                         </div>
                         <h3 className="text-xl font-semibold text-gray-600 mb-2">No se encontraron productos</h3>
                         <p className="text-gray-500">
-                            {tienesFiltrosActivos 
-                                ? "Intenta ajustar tus filtros de búsqueda" 
+                            {tienesFiltrosActivos
+                                ? "Intenta ajustar tus filtros de búsqueda"
                                 : "No hay productos disponibles"
                             }
                         </p>
@@ -208,7 +210,7 @@ export const VisualizarProductos: React.FC = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                                                    {producto.categoria}
+                                                    {producto.categoria.nombre}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-sm font-semibold text-gray-900">

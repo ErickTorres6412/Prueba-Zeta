@@ -70,7 +70,6 @@ function agregar(tabla, data) {
 function actualizar(tabla, data) {
     console.log('Actualizando datos:', data);
     return new Promise((resolve, reject) => {
-        // Separar el id del resto de los datos
         const { id, ...updateData } = data;
         const keys = Object.keys(updateData);
         const values = Object.values(updateData);
@@ -95,7 +94,6 @@ function eliminar(tabla, data) {
     });
 }
 
-// Función para consultas personalizadas
 function query(sql, params = []) {
     return new Promise((resolve, reject) => {
         conexion.query(sql, params, (error, result) => {

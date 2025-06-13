@@ -173,7 +173,7 @@ export default function CatalogoPage() {
                       <div className="space-y-3">
                         <div>
                           <span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full mb-2">
-                            {producto.categoria}
+                            {producto.categoria.nombre}
                           </span>
                           <h3 className="text-lg font-bold text-gray-900 line-clamp-2">
                             {producto.nombre}

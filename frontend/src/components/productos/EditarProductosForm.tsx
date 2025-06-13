@@ -4,12 +4,13 @@ import type React from "react"
 import { useParams } from "next/navigation"
 import { Button } from "@/components/ui/Button"
 import { FormInput } from "@/components/ui/Input"
+import { FormSelect } from "@/components/ui/FormSelect"
 import { useEditProductForm } from "@/hooks/Productos/useEditProductForm"
-import { 
-  Package, 
-  DollarSign, 
-  Image, 
-  Tag, 
+import {
+  Package,
+  DollarSign,
+  Image,
+  Tag,
   FileText,
   ArrowLeft,
   Save
@@ -26,7 +27,15 @@ export const EditarProductosForm: React.FC = () => {
     isLoading,
     handleInputChange,
     handleSubmit,
+    handleSelectChange,
+    categorias
   } = useEditProductForm(id)
+
+  // Convertir categorías al formato requerido por FormSelect
+  const categoriaOptions = categorias.map(categoria => ({
+    value: categoria.id,
+    label: categoria.nombre
+  }))
 
   // Estado de carga
   if (isLoading) {
@@ -113,17 +122,18 @@ export const EditarProductosForm: React.FC = () => {
               helperText="Mínimo 3 caracteres, máximo 100"
             />
 
-            <FormInput
+            <FormSelect
               label="Categoría"
-              name="categoria"
-              placeholder="Ej: Smartphones, Laptops, Tablets"
-              value={product.categoria}
-              onChange={handleInputChange}
-              error={errors.categoria}
+              name="categoria_id"
+              value={product.categoria_id}
+              onChange={handleSelectChange} // Usar la nueva función
+              error={errors.categoria_id}
               disabled={isSubmitting}
               isRequired
               leftIcon={<Tag className="w-4 h-4" />}
-              helperText="Mínimo 2 caracteres, máximo 50"
+              options={categoriaOptions}
+              placeholder="Selecciona una categoría"
+              helperText="Selecciona la categoría del producto"
             />
 
             <FormInput

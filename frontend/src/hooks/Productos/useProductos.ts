@@ -30,9 +30,19 @@ export function useProductos() {
         cargarProductos()
     }, [])
 
-    // Obtener categorías únicas
     const categorias = useMemo(() => {
-        return [...new Set(productos.map(p => p.categoria))]
+        const categoriasUnicas = new Map()
+
+        productos.forEach(producto => {
+            if (producto.categoria && !categoriasUnicas.has(producto.categoria.id)) {
+                categoriasUnicas.set(producto.categoria.id, {
+                    id: producto.categoria.id,
+                    nombre: producto.categoria.nombre
+                })
+            }
+        })
+
+        return Array.from(categoriasUnicas.values())
     }, [productos])
 
     // Filtrar productos
@@ -44,14 +54,14 @@ export function useProductos() {
             productosFilt = productosFilt.filter(producto =>
                 producto.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 producto.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                producto.categoria.toLowerCase().includes(searchTerm.toLowerCase())
+                producto.categoria.nombre.toLowerCase().includes(searchTerm.toLowerCase())
             )
         }
 
         // Filtrar por categoría
         if (selectedCategory) {
             productosFilt = productosFilt.filter(producto =>
-                producto.categoria === selectedCategory
+                producto.categoria.nombre === selectedCategory
             )
         }
 
